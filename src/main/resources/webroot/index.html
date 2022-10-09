@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ES Tool V1.0.0</title>
+<style>
+body{font-family:Helvetica,'microsoft yahei'; -webkit-font-smoothing: antialiased;}
+h1,h2,h3,h4,h5,h6{font-size:100%; margin:0; font-weight:400;}
+body,form,ul,ol,dl,dd,p{margin:0;}
+ul,ol{list-style-type:none; padding: 0;}
+img{border:0 none;vertical-align:middle;}
+a{text-decoration:none;outline: 0;}
+textarea{ overflow:auto; resize: vertical;}
+table {border-collapse:collapse;border-spacing:0;}
+:active,:focus{ outline: 0;}
+input::-ms-clear{display:none;}
+.mfix:before{content:'';display:inline-block; width:0; height:100%; vertical-align:middle;}
+.mfix>*{display:inline-block;vertical-align:middle;}
+a,button,input,textarea{-webkit-tap-highlight-color: rgba(0,0,0,0);}
+@media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 2dppx){ 
+    /* Retina 下仍使用默认字体渲染 */
+	body { -webkit-font-smoothing: subpixel-antialiased; }
+}
+/****/
+html,body{height: 100%; overflow: hidden;}
+.content{height: 100%; overflow: auto; box-sizing: border-box; background: #fff;  padding: 0px 30px 30px 230px;}
+.header{ position: absolute; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.5); background: #c7c7c7; left: 0; top: 0; width: 200px; height: 70px; text-align: left; color: #333; line-height: 70px; }
+.header span{font-size: 26px;}
+.side{ position: absolute; padding-top: 20px; left: 0; top: 140px; bottom: 0; width: 200px; color: #333;  background: #c7c7c7;}
+.side li{ height: 44px; line-height: 44px; cursor: pointer; padding-left: 40px; border-left: 4px solid transparent;}
+.side li:hover{ background: rgba(0,0,0,.2);}
+.side li.active{ border-color: #ff9500;background: rgba(0,0,0,.2);}
+h2{border-bottom: 1px solid #666; }
+.con_hd{ position: relative; /*height: 40px;*/ line-height: 40px; color: #424f5a; }
+.con_hd span{font-size: 24px;}
+.con_hd a{ cursor: pointer; margin-right: 10px; position: relative; transition:.3s;height: 32px; line-height: 32px; padding: 0 15px; color: #333; background: #c7c7c7; border: 1px solid #666;  border-radius: 3px; font-size: 16px;}
+.con_hd a input{ cursor: pointer; position: absolute; z-index: 10; left: 0; top: 0; right: 0; bottom: 0; opacity: 0;}
+.con_hd a:hover{ border-color:#2f5480;}
+.con_bd{ padding-top: 10px;}
+.con_title{color: #424f5a;padding: 5px 0; font-size: 18px;  }
+.con_form{ width: 98%; color: #666;table-layout: fixed;}
+.con_form tr{ height: 44px;font-size:16px;}
+.con_form th{ background: #c7c7c7; color: #333;border: 1px solid #999;}
+.con_form td{ border: 1px solid #999; text-align:  center;}
+.input{  background: #eee;  height: 42px;  padding: 0 10px;}
+.input input,.input select{width: 100%;font-size:16px;border: 0; background: none; margin: 10px 0; box-sizing: border-box;}
+.input:hover{ background: #e2f0fb;}
+.con{ display: none; height:100%;}
+.con>form{ display:flex; height:100%; flex-direction:column; }
+textarea{ box-sizing: border-box; border: 1px solid #ccc; width: 98%;}
+.inputtext{ height: 34px; margin: 0 10px; border: 1px solid #ccc; line-break: 34px; padding: 0 4px; font-size: 14px;}
+.mask{ position: absolute; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0,0,0,.5); z-index: 10; display: none;}
+.pop_window{ position: absolute; box-sizing: border-box; padding:0 20px; width: 900px; transform: translate(-50%,-50%); background: #fff; left: 50%; top: 50%; overflow: auto; height: 90%;}
+.con_ft{ border: 0; text-align: right;}
+.clear{ z-index: 10; cursor: pointer; position: absolute; right: 0; top: 0; width: 40px; height: 40px; background:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAQAAAD9CzEMAAAAsklEQVR4Ae2WsQrEIBAFH/iRUfN1yUnIRwoeuXKbc1CbsGM/g1ssK8dxXkxQ0aZedp0KTH+rqXYmdlU1XSRR1H6vKnbqn/dRN1HVJv7q7X95AutBIgE9INkE1/ME14NEBnpAtgmk5wmo54n5ejN1oOcJql8fWD8irq9mR03Xb4okwfUPKMH1NpGm6cGmHdXzBNfbRB7Sg007oJ+aOPv0JnGQw+vCh1dRWHk6HgpyHOe1fAE3Nwx9TaPILQAAAABJRU5ErkJggg==') center center no-repeat; background-size: 24px;}
+.clear:hover{ background-color: #ccc}
+
+.dataFromTable{
+    width: 100%;font-size: 14px;font-family: 'Microsoft Yahei';color:#333;
+}
+.thead{
+    color: #666;
+    font-weight:bold;
+    position:sticky;
+    top:0;
+}
+.thead tr{ background: #cbd4ea; }
+.dataFromTable td{
+    height: 35px;
+    text-align: center;
+    vertical-align: middle!important;
+    border: 1px solid #ddd;
+    word-break: break-all;
+    overflow: hidden;
+    padding: 0 5px;
+}
+.dataFromTable tr:nth-child(even){ background: #f6f6f6 }
+.con_table{ flex:1; overflow:auto; }
+.con_table td{ white-space:nowrap; } 
+</style>
+<META HTTP-EQUIV="pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate">
+<META HTTP-EQUIV="expires" CONTENT="Thu, 01 Jan 1970 00:00:01 GMT">
+<META HTTP-EQUIV="expires" CONTENT="0">
+<script type="text/javascript" src="/js/jquery-1.11.2.min.js"></script>
+<link rel="stylesheet" href="/css/jquery-editable-select.css" rel="stylesheet">
+<script type="text/javascript" src="/js/jquery-editable-select.js"></script>
+<script type="text/javascript" src="/js/BaseWebsocket.js"></script>
+<script type="text/javascript" src="/js/global.js"></script>
+<script type="text/javascript" src="/js/codemirror/lib/codemirror.js"></script>
+<link rel="stylesheet" href="/js/codemirror/lib/codemirror.css">
+<script type="text/javascript" src="/js/codemirror/mode/sql/sql.js"></script>
+<script type="text/javascript" src="/js/codemirror/mode/javascript/javascript.js"></script>
+</head>
+
+<body>
+
+<div class="header mfix">
+  <span style="width:185px">ElasticSearch</span>
+  <input class="inputtext" type="search" id="elasticSearchUrl" value="172.16.15.52:9200"
+  pattern="((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):\d{4,5}" placeholder="172.16.15.52:9200" />
+</div>
+<ul class="side" id="side">
+	<li id="query" class="active">SQL查询</li>
+	<li id="dslQuery">DSL查询</li>
+	<li id="index">索引查询</li>
+	<li id="templeate">模板查询</li>
+	<!-- <li id="templeateCreate">模板创建</li> -->
+	<li id="sqlDelete">SQL删除</li>
+	<li id="export">数据导出</li>
+	<li id="import">数据导入</li>
+</ul>
+<div class="content" id="content">
+  <div class="con" style="display: block">
+    <form id="sqlSearchForm" method="POST" action="sqlQuery" >
+		<h2 class="con_hd"><span>SQL Query</span></h2>
+	    <div class="con_bd">
+		    <textarea name="queryText" id="queryText" rows="8">select * from </textarea>
+		</div>
+		<h2 class="con_hd mfix">
+			<a onclick="javascript:sqlQuery('sqlExplain');">解析SQL</a>
+			<a onclick="javascript:sqlQuery('sqlSearch');">SQL查询（原始）</a>
+			<a onclick="javascript:sqlQuery('sqlSearch',true);">SQL查询（表格）</a>
+			<a onclick="javascript:sqlQuery('sqlSearchFormat');">格式化查询</a>
+			分隔符<select id="separator"><option value="],[" selected="selected">],[</option><option value="\t">\t</option></select>
+		</h2>
+		<h2 class="con_hd"><span>Result(</span><span id="sqlQueryCount">0</span><span>)</span></h2>
+	    <div class="con_bd">
+		    <textarea name="queryResult" id="queryResult" rows="25"></textarea>
+		</div>
+	    <div class="con_table">
+		    <div id="dataTable"></div>
+		</div>
+    </form>
+  </div>
+  <div class="con" style="display: none">
+    <form id="dslSearchForm" method="POST" action="dslQuery" >
+      <h2 class="con_hd mfix"><span>DSL Query</span><input class="inputtext" id="dslQueryIndex" size="60"/></h2>
+      <div class="con_bd">
+          <textarea name="dslQueryText" id="dslQueryText" rows="8"></textarea>
+      </div>
+      <h2 class="con_hd mfix">
+        <a onclick="javascript:dslQuery('dslSearch');">DSL查询</a>
+        <a onclick="javascript:dslQuery('dslSearchFormat');">格式化查询</a>
+        分隔符<select id="dslSeparator"><option value="],[" selected="selected">],[</option><option value="\t">\t</option></select>
+      </h2>
+      <h2 class="con_hd"><span>Result(</span><span id="dslQueryCount">0</span><span>)</span></h2>
+      <div class="con_bd">
+        <textarea name="dslQueryResult" id="dslQueryResult" rows="25"></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="con" style="display: none">
+		<h2 class="con_hd mfix">
+          <select id="indexStatus"><option value="" selected="selected">all</option><option value="open">open</option><option value="close">close</option></select>
+          <input class="inputtext" id="indexFilter" size="60"/><a onclick="javascript:refreshIdx();">刷新</a>
+        </h2>
+		<div class="con_bd">
+			<table class="con_form">
+				<tr><th width="6%">helth</th><th width="6%">status</th><th >index</th><th width="5%">shards</th><th width="5%">replicas</th>
+				<th width="15%">docs.count</th><th width="8%">docs.deleted</th><th width="8%">store.size</th><th width="8%">operate</th>
+				</tr>
+				<tbody id="indexBody">
+				</tbody>
+			</table>
+		</div>
+  </div>
+  <div class="con" style="display: none">
+  	  <h2 class="con_hd mfix"><input class="inputtext" id="templateFilter" size="60"/><a onclick="javascript:refreshTemplate();">刷新</a></h2>
+  	  <div class="con_bd">
+  		<table class="con_form">
+  			<tr><th width="50%">templateName</th><th>operate</th>
+  			</tr>
+  			<tbody id="templateBody">
+  			</tbody>
+  		</table>
+  	  </div>
+  </div>
+  
+  <div class="con" style="display: none">
+    <h2 class="con_hd mfix">
+		<a onclick="javascript:deleteBtn();">删除</a>
+	</h2>
+    <div class="con_bd">
+        <textarea name="deleteSql" id="deleteSql" rows="3">delete from </textarea>
+    </div>
+    <div class="con_bd" id="deleteResult">
+	    <!-- <textarea name="exportResult" rows="30"></textarea> -->
+	</div>
+  </div>
+  
+  <div class="con" style="display: none">
+    <h2 class="con_hd mfix" style="border:0px">
+		<!-- <span>索引：</span>
+		<input class="inputtext" id="exportIndex" placeholder="请输入索引名称"/> -->
+		<a onclick="javascript:exportBtn(1);">导出备份（数据可重新导入ES）</a>
+		<a onclick="javascript:exportBtn(3);">导出数据（仅保留json格式的数据）</a>
+		<a onclick="javascript:exportBtn(4);">导出Excel（sql需要指明字段）</a><br/>
+		<a onclick="javascript:exportBtn(2);">导出日志（sql需要指明字段，按分隔符导出）</a>
+		分隔符<select id="exportSeparator"><option value="],[" selected="selected">],[</option><option value="\t">\t</option></select>
+    </h2>
+    <h2 class="con_hd mfix">
+        <input type="radio" name="exportByDay" value="false" checked="checked">全量导出</input>
+        <input type="radio" name="exportByDay" value="true" >按天导出</input>
+	</h2>
+    <div class="con_bd">
+        <textarea name="exportQuerySql" id="exportQuerySql" rows="3">select * from </textarea>
+    </div>
+    <div class="con_bd" id="exportResult">
+	    <!-- <textarea name="exportResult" rows="30"></textarea> -->
+	</div>
+  </div>
+  <div class="con" style="display: none">
+    <h2 class="con_hd mfix" style="border:0px">
+		<span>文件：</span>
+		<!-- <a><input id="importFile" type="file" onchange="console.log(this.value)" /><i>选择文件</i></a> -->
+        <input class="inputtext" id="dataFilePath" size="80" placeholder="请选择索引文件" readonly="readonly"/>
+		<a onclick="javascript:browseFile();">文件浏览</a>
+		<a onclick="javascript:importBtn();">导入</a>
+	</h2>
+    <h2 class="con_hd mfix">
+        <input type="radio" name="importUseSourceId" value="true" checked="checked">原数据主键导入</input>
+        <input type="radio" name="importUseSourceId" value="false" >随机主键导入</input>
+    </h2>
+    <div class="con_bd" id="importResult">
+	    <!-- <textarea id="importResult" rows="30"></textarea> -->
+	</div>
+  </div>
+</div>
+
+<div class="mask" id="delWindow" style="display:none">
+  <div class="pop_window">
+    <a class="clear" onclick="closeWindow(this)"></a>
+    <h2 class="con_hd"><span id="tipTitleDel">Confirm</span></h2>
+    <div class="con_bd" id="tipContent">
+      &nbsp;&nbsp;删除索引<span id="delIndexName" style="color:blue"></span>，请在下面输入框中输入<span style="color:red">删除</span>，点击<span style="color:blue">确认</span>按钮。<br/>
+      <input class="inputtext" id="delIndexConfirm" autocomplete="off" size="20"/><span class="con_hd mfix"><a onclick="deleteIndex()">确认</a></span><br/>&nbsp;
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="updateTemplateWindow" style="display:none">
+  <div class="pop_window">
+    <a class="clear" onclick="closeWindow(this)"></a>
+    <h2 class="con_hd"><input class="inputtext" id="updateTemplateName" autocomplete="off" size="50"/></h2>
+    <div class="con_bd" id="tipContent">
+      <textarea id="updateTemplateContent" rows="30"></textarea>
+      &nbsp;&nbsp;修改模板，请在下面输入框中输入<span style="color:red">修改</span>，点击<span style="color:blue">提交</span>按钮。<br/>
+      <input class="inputtext" id="updateTemplateConfirm" autocomplete="off" size="20"/><span class="con_hd mfix"><a onclick="updateTemplate()">提交</a></span><br/>&nbsp;
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="popWindow" style="display:none">
+  <div class="pop_window">
+    <a class="clear" onclick="closeWindow(this)"></a>
+    <h2 class="con_hd"><span id="tipTitle">Detail</span></h2>
+    <div class="con_bd" id="tipContent">
+      <textarea id="tipTextArea" rows="30"></textarea>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="browseWindow" style="display:none">
+  <div class="pop_window">
+    <a class="clear" href="javascript:closeBrowseWindow();"></a>
+    <h2 class="con_hd"><span>Local File Browse</span></h2>
+    <div class="con_bd" id="dirPath"></div>
+    <div class="con_bd" id="dirListFiles"></div>
+  </div>
+</div>
+
+<script type="text/javascript">
+var aLi = document.querySelectorAll('#side li');
+var aCon = document.querySelectorAll('#content .con');
+var index = 0;
+aLi.forEach(function(el,i){
+    el.onclick = function(){
+        aCon[index].style.display = 'none';
+        aLi[index].className = '';
+        index = i;
+        aCon[i].style.display = 'block';
+        aLi[i].className = 'active';
+        if ('index' === aLi[i].id) {
+          refreshIdx();
+        }
+        if ('templeate' === aLi[i].id) {
+          refreshTemplate();
+        }
+    }
+});
+$('#elasticSearchUrl').blur(function(){
+  setGlobalVar('elasticSearchUrl',$('#elasticSearchUrl').val());
+});
+
+var _config = null;
+$(function () {
+  $.ajax({
+    url : '/getConfig?' + _time(),
+    type : 'GET',
+    async : true,
+    timeout : 5000,
+    success : function(data){
+      _config = data;
+      if (data.esUrl && data.esUrl.length > 0) {
+        $('#elasticSearchUrl').val(data.esUrl);
+      }
+    }
+  });
+  /*var elasticSearchUrl = getGlobalVar('elasticSearchUrl');
+  if (elasticSearchUrl && elasticSearchUrl.length > 0) {
+    console.log('set cookie elasticSearchUrl['+elasticSearchUrl+']');
+    $('#elasticSearchUrl').val(elasticSearchUrl);
+  }*/
+  window.editor = CodeMirror.fromTextArea(document.getElementById('queryText'), {
+    mode: 'text/x-mysql',
+    indentWithTabs: true,
+    smartIndent: true,
+    lineNumbers: true,
+    matchBrackets : true,
+    autofocus: true,
+    extraKeys: {
+      "Ctrl-Space": "autocomplete",
+      //"Ctrl-Enter": angular.element($("#queryText")).scope().search
+    } 
+  }); 
+});
+
+$('#separator').editableSelect(
+    { filter: false }
+);
+$('#dslSeparator').editableSelect(
+    { filter: false }
+);
+$('#exportSeparator').editableSelect(
+    { filter: false }
+);
+
+var queryCount = 0;
+function sqlQuery(queryType, isTable) {
+  var params = {
+    queryText : getQueryTextContent(),
+    separator : $('#separator').val()
+  };
+  $.ajax({
+    url : '/sqlQuery?queryType=' + queryType + '&esUrl=' + encodeURIComponent($('#elasticSearchUrl').val()) + _time(),
+    type : 'POST',
+    async : true,
+    data : params,
+    timeout : 300000,
+    //dataType : 'text',
+    success : function(data){
+      if (data.success && data.success === true) {
+        if (isTable === true) {
+          $('#queryResult').hide();
+          $('#dataTable').show();
+          sqlQueryMessageTable('#dataTable', data);
+        } else {
+          $('#queryResult').show();
+          $('#dataTable').hide();
+          sqlQueryMessage('#queryResult', data.data);
+        }
+      } else {
+        showPopWindowError(data.data);
+      }
+      $("#sqlQueryCount").html(++queryCount);
+    }
+  });
+}
+
+function sqlQueryMessage(_resultId, data) {
+  try {
+    $(_resultId).val(JSON.stringify(JSON.parse(data), null, 2));
+  } catch (e) {
+    $(_resultId).val(data);
+  }
+}
+
+function sqlQueryMessageTable(_tableId, response) {
+  try {
+    var hits = JSON.parse(response.data)["hits"];
+    if (hits) {
+      hits = hits["hits"];
+    } else {
+      $(_tableId).val(response.data);
+      return;
+    }
+    
+    var titleList = response.title;
+    // 标题
+    var html = '<tbody class="thead"><tr><td>NO.</td><td>_index</td><td>_type</td><td>_id</td>';
+    for (var i = 0; i < titleList.length; i++) {
+      html += '<td>{0}</td>'.format(titleList[i]);
+    }
+    html += '</tr></tbody>';
+    // 内容
+    if (hits) {
+      for (var m = 0; m < hits.length; m++) {
+        html += '<tr>';
+        html += '<td>{0}</td>'.format(m+1);
+        html += '<td>{0}</td>'.format(hits[m]["_index"]);
+        html += '<td>{0}</td>'.format(hits[m]["_type"]);
+        html += '<td>{0}</td>'.format(hits[m]["_id"]);
+        for (var i = 0; i < titleList.length; i++) {
+          var tmpData = hits[m]["_source"][titleList[i]];
+          tmpData = tmpData == undefined ? '-' : tmpData.toString();
+          html += '<td>{0}</td>'.format(tmpData);
+        }
+        html += '</tr>';
+      }
+    }
+    $(_tableId).html('<table class="dataFromTable">'+html+'</table>');
+  } catch (e) {
+    console.log(e);
+    $(_tableId).html(response.data);
+  }
+}
+
+var dslQueryCount = 0;
+function dslQuery(queryType) {
+  var params = {
+    indexText : getAreaSelectedText('dslQueryIndex'),
+    queryText : getAreaSelectedText('dslQueryText'),
+    separator : $('#dslSeparator').val()
+  };
+  $.ajax({
+    url : '/dslQuery?queryType=' + queryType + '&esUrl=' + encodeURIComponent($('#elasticSearchUrl').val()) + _time(),
+    type : 'POST',
+    async : true,
+    data : params,
+    timeout : 300000,
+    //dataType : 'text',
+    success : function(data){
+      if (data.success && data.success === true) {
+        sqlQueryMessage('#dslQueryResult', data.data);
+      } else {
+        showPopWindowError(data.data);
+      }
+      $("#dslQueryCount").html(++dslQueryCount);
+    }
+  });
+}
+
+function refreshIdx() {
+  $.ajax({
+    url : '/refreshIndex?esUrl=' + encodeURIComponent($('#elasticSearchUrl').val()) + _time(),
+    type : 'GET',
+    async : true,
+    timeout : 5000,
+    success : function(data){
+      if (data.success && data.success === true) {
+        refreshIdxMessage(data.data);
+      } else {
+        showPopWindowError(data.data);
+      }
+    }
+  });
+}
+
+$('#indexFilter').keyup(function(e){
+  if(e.which == 13){
+    refreshIdx();
+  }
+});
+function refreshIdxMessage(data) {
+  var filter = $('#indexFilter').val();
+  var indexStatus = $('#indexStatus').val();
+  var content = '';
+  for (var i = 0; i < data.length; i++ ) {
+    if (data[i][2].indexOf(filter) == -1) {
+      continue;
+    }
+    if (indexStatus != '' && data[i][1] != indexStatus) {
+      continue;
+    }
+    content += '<tr>'
+    for (var j = 0; j < 8; j++ ) {
+      var _tmp = data[i][j];
+      if (_tmp == undefined) {
+        _tmp = "";
+      }
+      if (j == 0) {
+        var color = 'color';
+        if (data[i][0].indexOf('yellow') != -1) {
+          color = 'background-color';
+        }
+        var tdContent = '<span style="' + color + ': ' + data[i][j] + ';">' + data[i][j] + '</span>';
+        content = content + '<td>' + tdContent + '</td>';
+      } else if (j == 5 || j == 6) {
+        content = content + '<td>' + CommUtil.showNumber(_tmp) + '</td>';
+      } else {
+        content = content + '<td>' + _tmp + '</td>';
+      }
+    }
+    content += '<td><a href="javascript:viewIndex(\'{0}\');">view</a> <a href="javascript:confirmDeleteIndex(\'{1}\');">delete</a></td></tr>'.format(data[i][2],data[i][2]);
+  }
+  document.getElementById('indexBody').innerHTML = content;
+}
+
+function viewIndex(indexName) {
+  $.ajax({
+    url : '/viewIndex?esUrl=' + encodeURIComponent($('#elasticSearchUrl').val()) + "&indexName=" + indexName + _time(),
+    type : 'GET',
+    async : true,
+    timeout : 5000,
+    success : function(data){
+      if (data.success && data.success === true) {
+        showPopWindowDetail(JSON.stringify(JSON.parse(data.data), null, 2));
+      } else {
+        showPopWindowError(data.data);
+      }
+    }
+  });
+}
+
+function confirmDeleteIndex(indexName) {
+  document.getElementById("delWindow").style.display = 'block';
+  $("#delIndexName").html(indexName);
+}
+
+function deleteIndex() {
+  var indexName = $("#delIndexName").html();
+  var delConfirm = $("#delIndexConfirm").val();
+  if (delConfirm === '删除') {
+    $.ajax({
+      url : '/deleteIndex?esUrl=' + encodeURIComponent($('#elasticSearchUrl').val()) + "&indexName=" + indexName + _time(),
+      type : 'GET',
+      async : true,
+      timeout : 60000,
+      success : function(data){
+        if (data.success && data.success === true) {
+          document.getElementById("delWindow").style.display = 'none';
+          refreshIdx();
+        } else {
+          showPopWindowError(data.data);
+        }
+      },
+      error : function(){
+        showPopWindowError("调用异常");
+      }
+    });
+  }
+}
+
+function refreshTemplate() {
+  $.ajax({
+    url : '/refreshTemplate?esUrl=' + encodeURIComponent($('#elasticSearchUrl').val()) + _time(),
+    type : 'GET',
+    async : true,
+    timeout : 5000,
+    success : function(data){
+      if (data.success && data.success === true) {
+        refreshTemplateMessage(data.data);
+      } else {
+        showPopWindowError(data.data);
+      }
+    }
+  });
+}
+
+function refreshTemplateMessage(data) {
+  var filter = $('#templateFilter').val();
+  var content = '';
+  for (var i = 0; i < data.length; i++ ) {
+    if (data[i].indexOf(filter) == -1) {
+      continue;
+    }
+    content += '<tr>';
+    content = content + '<td>' + data[i] + '</td>';
+    content += '<td><a href="javascript:viewTemplate(\''+data[i]+'\');">Edit</a></td></tr>'
+  }
+  document.getElementById('templateBody').innerHTML = content;
+}
+
+function viewTemplate(templateName) {
+  $.ajax({
+    url : '/viewTemplate?esUrl=' + encodeURIComponent($('#elasticSearchUrl').val()) + "&templateName=" + templateName + _time(),
+    type : 'GET',
+    async : true,
+    timeout : 5000,
+    success : function(data){
+      if (data.success && data.success === true) {
+        //showPopWindowDetail(JSON.stringify(JSON.parse(data.data)[templateName], null, 2));
+        $("#updateTemplateName").val(templateName);
+        $("#updateTemplateContent").val(JSON.stringify(JSON.parse(data.data)[templateName], null, 2));
+        $("updateTemplateConfirm").val('');
+        $("#updateTemplateWindow").show();
+      } else {
+        showPopWindowError(data.data);
+      }
+    }
+  });
+}
+
+function updateTemplate() {
+  var templateName = $("#updateTemplateName").val();
+  var updateConfirm = $("#updateTemplateConfirm").val();
+  if (updateConfirm === '修改') {
+    var params = {
+      queryText : $("#updateTemplateContent").val()
+    };
+    $.ajax({
+      url : '/updateTemplate?esUrl=' + encodeURIComponent($('#elasticSearchUrl').val()) + "&templateName=" + templateName + _time(),
+      type : 'POST',
+      data : params,
+      async : true,
+      timeout : 60000,
+      success : function(data){
+        $("#updateTemplateWindow").hide();
+        if (data.success && data.success === true) {
+          refreshTemplate();
+        } else {
+          showPopWindowError(data.data);
+        }
+      },
+      error : function(){
+        $("#updateTemplateWindow").hide();
+        showPopWindowError("调用异常");
+      }
+    });
+  }
+}
+
+function deleteBtn() {
+  BaseWebSocketOption.handler = function(innerHTML) {
+    var old_Mes = document.getElementById('deleteResult').innerHTML;
+    document.getElementById('deleteResult').innerHTML = innerHTML + '<br/>' + old_Mes.substring(0, 1800);
+  }
+  var webSocket = new BaseWebSocket('ws://' + _config.hostAddress + ':8057/websocket');
+    // var webSocket = new BaseWebSocket('ws://localhost:8057/websocket');
+  var param  = {
+    type : 'deleteSql',
+    esUrl : $('#elasticSearchUrl').val(),
+    deleteSql : $('#deleteSql').val()
+  };
+  webSocket.send(JSON.stringify(param));
+}
+
+function exportBtn(exportType) {
+  /*if ($('#exportIndex').val() == '') {
+    $('#exportIndex').focus();
+    return;
+  }*/
+  BaseWebSocketOption.handler = function(innerHTML) {
+    var old_Mes = document.getElementById('exportResult').innerHTML;
+    document.getElementById('exportResult').innerHTML = innerHTML + '<br/>' + old_Mes.substring(0, 1800);
+  }
+  var webSocket = new BaseWebSocket('ws://' + _config.hostAddress + ':8057/websocket');
+    // var webSocket = new BaseWebSocket('ws://localhost:8057/websocket');
+  var param  = {
+    type : 'export',
+    esUrl : $('#elasticSearchUrl').val(),
+    //indexName : $('#exportIndex').val()
+    exportQuerySql : $('#exportQuerySql').val(),
+    exportSeparator : $('#exportSeparator').val(),
+    exportType : exportType,
+    exportByDay : $('input[name="exportByDay"]:checked').val()
+  };
+  webSocket.send(JSON.stringify(param));
+}
+
+function importBtn() {
+  if ($('#dataFilePath').val() == '') {
+    $('#dataFilePath').focus();
+    return;
+  }
+  BaseWebSocketOption.handler = function(innerHTML) {
+    var old_Mes = document.getElementById('importResult').innerHTML;
+    document.getElementById('importResult').innerHTML = innerHTML + '<br/>' + old_Mes.substring(0, 1800);
+  }
+  var webSocket = new BaseWebSocket('ws://' + _config.hostAddress + ':8057/websocket');
+    // var webSocket = new BaseWebSocket('ws://localhost:8057/websocket');
+  var param  = {
+    type : 'import',
+    esUrl : $('#elasticSearchUrl').val(),
+    dataFilePath : $('#dataFilePath').val(),
+    importUseSourceId : $('input[name="importUseSourceId"]:checked').val()
+  };
+  webSocket.send(JSON.stringify(param));
+}
+
+function _time() {
+  return "&_time=" + new Date().getTime();
+}
+
+function getAreaSelectedText(areaId) {
+  var areaText = $('#'+areaId).val();
+  var selText = getSelectedText();
+  if (selText && selText.length > 0 && areaText.indexOf(selText) != -1) {
+    return selText;
+  }
+  return areaText;
+}
+
+function closeWindow(hrefObj) {
+  var divObj = hrefObj;
+  for (var i = 0; i < 3; i++) {
+    if (divObj.className != 'mask') {
+      divObj = divObj.parentNode;
+    }
+    else {
+      document.getElementById(divObj.id).style.display = 'none';
+    }
+  }
+}
+
+function closePopWindow(windowId) {
+  windowId = windowId || 'popWindow';
+  document.getElementById("popWindow").style.display = 'none';
+}
+
+function showPopWindowDetail(contentTxt) {
+  document.getElementById("popWindow").style.display = 'block';
+  //$("#tipTitle").html("Detail");
+  $("#tipTextArea").val(contentTxt);
+}
+
+function showPopWindowError(contentTxt) {
+  document.getElementById("popWindow").style.display = 'block';
+  $("#tipTitle").html("Error");
+  $("#tipTextArea").val(contentTxt);
+  //$("#tipContent").html(contentTxt);
+}
+
+var showFileWebSocket = null;
+function closeBrowseWindow() {
+  showFileWebSocket.closeWebSocket();
+  document.getElementById("browseWindow").style.display = 'none';
+}
+
+function browseFile() {
+  BaseWebSocketOption.handler = showBrowseData;
+  showFileWebSocket = new BaseWebSocket('ws://' + _config.hostAddress + ':8057/websocket');
+    // showFileWebSocket = new BaseWebSocket('ws://localhost:8057/websocket');
+  var param  = {
+    type : 'browseFile',
+    dirPath : $('#dataFilePath').val()
+  };
+  showFileWebSocket.send(JSON.stringify(param));
+  document.getElementById("browseWindow").style.display = 'block';
+  $("#dirPath").html("");
+  $("#dirListFiles").html("");
+}
+
+function changeFile(fileName, isFile) {
+  if (isFile) {
+    $("#dataFilePath").val($("#dirPath").html() + "/" + fileName);
+    closeBrowseWindow();
+  } else {
+    var param  = {
+      type : 'browseFile',
+      dirPath : $('#dirPath').html(),
+      subPath : fileName
+    };
+    showFileWebSocket.send(JSON.stringify(param));
+  }
+}
+
+var sortType = 1;
+function sortBrowseFile(type) {
+  sortType = type;
+  var param  = {
+    type : 'browseFile',
+    dirPath : $('#dirPath').html(),
+    sortType : type
+  };
+  showFileWebSocket.send(JSON.stringify(param));
+}
+
+function showBrowseData(data) {
+  var _data = JSON.parse(data);
+  $("#dirPath").html(_data.dirPath);
+  var sort1 = sortType == 1 ? '↑' : '';
+  var sort2 = sortType == 2 ? '↓' : '';
+  var dirListFiles = _data.dirListFiles;
+  var html = '<table style="width:100%">';
+  html += '<tr style="wdith:70%; border-bottom:1px solid #666">';
+  html += '<td><a id="sort1" href="javascript:sortBrowseFile(1)">File Name'+sort1+'</a></td>';
+  html += '<td><a id="sort2" href="javascript:sortBrowseFile(2)">File Update Time'+sort2+'</a></td>';
+  html += '</tr>';
+  for (var i = 0; i < dirListFiles.length; i++) {
+      html += '<tr style="wdith:70%; border-bottom:1px solid #666">';
+      html += '<td><a ';
+      if (!dirListFiles[i].file) {
+        html += 'style="color: green;"';
+      }
+      html += ' href="javascript:changeFile(\''+dirListFiles[i].fileName+'\','+dirListFiles[i].file+');">' + dirListFiles[i].fileName;
+      if (!dirListFiles[i].file) {
+        html += '/';
+      }
+      html += '</a></td>';
+      html = html + '<td>' + dirListFiles[i].updateTime + '</td>';
+      html = html + '</tr>';
+  }
+  html += '</table><br/>';
+  $("#dirListFiles").html(html);
+}
+
+function getSelectedText() {  
+  if (window.getSelection) {  
+    // This technique is the most likely to be standardized.  
+    // getSelection() returns a Selection object, which we do not document.  
+    return window.getSelection().toString();  
+  }  
+  else if (document.getSelection) {  
+    // This is an older, simpler technique that returns a string  
+    return document.getSelection();  
+  }  
+  else if (document.selection) {  
+    // This is the IE-specific technique.  
+    // We do not document the IE selection property or TextRange objects.  
+    return document.selection.createRange().text;  
+  } 
+} 
+
+function getQueryTextContent() {
+  var query = window.editor.getValue();
+  var selectedQuery = window.editor.getSelection();
+  if(selectedQuery != "" && selectedQuery != undefined){
+    query = selectedQuery;
+  }
+  return query;
+}
+</script>
+
+</body>
+</html>
