@@ -98,7 +98,12 @@ public class EsToolDispatcher implements Dispatcher
                 }
                 else
                 {
-                    result = IOUtil.readFileToString(EsToolDispatcher.class.getResource(WEB_ROOT + uri));
+                    InputStream is = EsToolDispatcher.class.getResourceAsStream(WEB_ROOT + uri);
+                 if(is==null){
+                     return Response.NOT_FOUND;
+                 }
+                    result = IOUtils.toString(is,"utf-8");
+
                 }
                 if (StringUtils.isEmpty(result))
                 {
