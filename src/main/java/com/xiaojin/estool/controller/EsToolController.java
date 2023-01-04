@@ -88,7 +88,6 @@ public class EsToolController
         Response response = new Response().setContentType(Response.TYPE_JSON).setResponseBody(
                 new Data(false, "", "Parameter [queryType] error.").toString());
 
-
         return response;
     }
 
